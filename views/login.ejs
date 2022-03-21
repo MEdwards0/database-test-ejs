@@ -1,0 +1,25 @@
+<html>
+
+    <body>
+        <h1>Log in</h1>
+
+        <form action="login" method="POST">
+
+            <label for='username'>Username: </label>
+            <input type='text' id='username' name='username'><br><br>
+
+            <label for='password'>Password: </label>
+            <input type='password' id='password' name='password'><br><br>
+
+            <input type='submit' value='Submit'>
+
+            <!-- <button class="btn" id="button"></button> -->
+        </form>
+
+        <p>Click on the submit button to submit the form.</p>
+        <p><strong><%=message%></strong></p>
+
+        <p>Don't have an account? <a href="register">Register here</a></p>
+    </body>
+
+</html>
