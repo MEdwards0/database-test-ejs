@@ -1,0 +1,81 @@
+html {
+    background-color: #ccc;
+}
+
+.login-box {
+    background-color: rgb(209, 77, 77);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1%;
+    border-radius: 25px;
+    box-shadow: yellow;
+}
+
+.login-box h1 {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-box input {
+    border-radius: 25px;
+}
+
+.login-box p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.login-box a {
+    color: purple;
+    text-decoration: none;
+}
+
+.login-box a:hover {
+    color: orange;
+    text-decoration: underline;
+    /* font-weight: lighter; */
+}
+
+#submit {
+    position: relative;
+    /* left: 40%; */
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    padding:5px 15px; 
+    background:#ccc; 
+    border:0 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    align-items: center;
+    width: 15rem;
+    height: 2rem;
+}
+
+.login-box label {
+    display: block;
+    font-weight: bold;
+    color: yellow;
+    text-align: center;
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin: 5px;
+
+}
+
+#username {
+    display: block;
+    margin:  auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#password {
+    display: block;
+    margin: auto;
+    margin-top: 5px;
+    margin-bottom: 13px;
+}
