@@ -9,6 +9,10 @@ const client = require('./db.js')
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
+const user = require('./user.js')
+
+let myUser = new user;
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded(({extended: false}))); 
 app.use(bodyParser.json());
@@ -108,6 +112,13 @@ function processLogin(params, res) {
                 }
 
                 if (password === p) {
+                    myUser.setUid = result.rows[0].id;
+                    myUser.setUsername = u;
+                    myUser.setPassword = result.rows[0].password;
+                    myUser.setIsAdmin = result.rows[0].isadmin;
+
+                    console.table(myUser);
+
                     res.cookie('username', u);
                     res.cookie('uid', result.rows[0].id);
                     res.cookie('isadmin', result.rows[0].isadmin);
@@ -183,6 +194,10 @@ function processEditUser(req, params, res) {
 }
 
 function processAdmin(req, res) {
+     if(myUser.getIsAdmin != 'Y') {
+         res.render('login', { message: '' });
+     } else {
+
     let tableName = 'mytable';
     let myQuery = `SELECT * FROM "${tableName}"`
     client.query(myQuery,
@@ -196,7 +211,9 @@ function processAdmin(req, res) {
                 // console.log(data); // checking what data holds
                 res.render('admin', { data });
             }
+            
         });
+    }
 }
 
 // Why did we reference the same id through different variables?
