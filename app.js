@@ -117,7 +117,7 @@ function processLogin(params, res) {
                     myUser.setPassword = result.rows[0].password;
                     myUser.setIsAdmin = result.rows[0].isadmin;
 
-                    console.table(myUser);
+                    // console.table(myUser);
 
                     res.cookie('username', u);
                     res.cookie('uid', result.rows[0].id);
@@ -159,7 +159,8 @@ function processRegister(params, res) {
 }
 
 function getEditProfile(req, res) {
-    let uid = req.cookies.uid;
+    // let uid = req.cookies.uid;
+    let uid = myUser.getUid;
     // console.log(uid);
     let tableName = 'mytable';
     let query = `SELECT * FROM ${tableName} WHERE id = ${uid}`;
@@ -175,9 +176,16 @@ function getEditProfile(req, res) {
 }
 
 function processEditUser(req, params, res) {
-    let uid = req.cookies.uid;
-    let u = req.cookies.username;
+    // let uid = req.cookies.uid;
+    // let u = req.cookies.username;
+    // let p = params.password;
+
+    let uid = myUser.getUid;
+    let u = myUser.getUsername;
     let p = params.password;
+
+    // console.table(myUser);
+    
 
     // console.log('DEBUG: uid in processEditUser is: ' + uid);
     let tableName = 'mytable';
@@ -276,8 +284,8 @@ function processAdminChangePassword(params, req, res) {
 
     password = password.replace(/\s/g, '');
 
-    console.log('ID is -> ' + uid);
-    console.log('Password is -> ' + password);
+    // console.log('ID is -> ' + uid);
+    // console.log('Password is -> ' + password);
 
     let tableName = 'mytable';
     let myQuery = `UPDATE "${tableName}" SET password = '${password}' WHERE id = ${uid}`;
