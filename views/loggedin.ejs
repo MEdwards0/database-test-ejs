@@ -1,7 +1,24 @@
 <html>
-    <body>
-        <h1>Welcome <%=user%>! You would have logged in!</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="style/profile.css">
+</head>
+<body>
+
+    <header>
+        <span id="message">Welcome, <%=user%></span>
+        <a href="./login">Logout</a>
+    </header>
+    <!-- <h1>Welcome <%=user%>!</h1> -->
+
+    <div class="actions">
         <a href="/edituser">Edit User</a>
         <%-admin%>
-    </body>
+    </div>
+
+</body>
+
 </html>

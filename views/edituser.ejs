@@ -1,19 +1,32 @@
 <html>
-
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/editprofile.css">
+    <title>Edit Profile</title>
+</head>
 <body>
-    <h1>Edit Profile</h1>
-
+    <header>
+        <h1>Edit Profile</h1>
+    </header>
+    
     <form action="edituser" method="POST">
 
-        <label for='username'>Username: </label>
-        <label for='username1'><%=username%></label><br><br>
+        <div class="container">
+            <label for='username' id="username-label">Username: </label>
+            <label for='username1' id="username"><%=username%></label>
 
-        <label for='password'>Password: </label>
-        <input type='password' id='password' name='password' value="<%=password%>"><br><br>
+            <label for='password'>Change Password: </label>
+            <input type='password' id='password' name='password' value="<%=password%>">
 
-        <input type='submit' value='Submit'>
-
-        <p>Back to log in: <a href="login">Log in</a></p>
+            <input type='submit' value='Submit' id="submit"> 
+        </div>
+        
+        <div class="info">
+            <p>Back to <a href="login">Login</a></p>
+        </div>
+        
 
     </form>
 </body>

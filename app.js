@@ -33,24 +33,24 @@ app.get('/register', (req, res) => {
     res.render('register', {message: ''});
 })
 
-app.get('/test', (req, res) => {
-    client.query('SELECT * FROM "mytable"',
-    (error, result) => {
-        if (error) {
-            console.log(error);
-            res.status(400).send(error);
-        }
-        // res.status(200).send(result.rows);
+// app.get('/test', (req, res) => {
+//     client.query('SELECT * FROM "mytable"',
+//     (error, result) => {
+//         if (error) {
+//             console.log(error);
+//             res.status(400).send(error);
+//         }
+//         // res.status(200).send(result.rows);
 
-        let isadmin = result.rows[0].isadmin;
+//         let isadmin = result.rows[0].isadmin;
 
-        if (isadmin == 'Y') {
-            console.log('match');
-        } else {
-            console.log('no match');
-        }
-    });
-});
+//         if (isadmin == 'Y') {
+//             console.log('match');
+//         } else {
+//             console.log('no match');
+//         }
+//     });
+// });
 
 app.get('/edituser', (req, res) => {
     getEditProfile(req, res);
@@ -60,15 +60,16 @@ app.get('/admin', (req, res)=> {
     processAdmin(req, res);
 })
 
+// app.get('/bug', (req, res) => {
+//     res.render('bug', { message:'on the getter'});
+// });
+
 app.post('/login', (req, res, next) => {
     processLogin(req.body, res);
 })
 
-
-
 app.post('/register2', (req, res, next) => {
     processRegister(req.body, res);
-
 })
 
 app.post('/edituser', (req, res) => {
@@ -94,7 +95,6 @@ app.post('/adminChangePassword', (req, res, next) => {
 function processLogin(params, res) {
     let u = params.username;
     let p = params.password;
-    // console.log(`Username: ${u} password: ${p}`);
 
     let tableName = 'mytable';
     client.query(`SELECT id, password, isadmin FROM ${tableName} WHERE username = '${u}'`,
@@ -103,25 +103,21 @@ function processLogin(params, res) {
                 console.log(error);
                 res.status(500).send(error);
             } else {
-                // for some reason, putting in gibberish username and password makes password variable undefined. try catch here to patch the error
                 let password;
                 try {
                     password = result.rows[0].password;
-                } catch (error) {
+                } catch (err) {
                     res.render('login', { message: 'Invalid username or password!' });
+                    // res.render('bug');
                 }
+
+                // could implement row count == 0 for no results found.
 
                 if (password === p) {
                     myUser.setUid = result.rows[0].id;
                     myUser.setUsername = u;
                     myUser.setPassword = result.rows[0].password;
                     myUser.setIsAdmin = result.rows[0].isadmin;
-
-                    // console.table(myUser);
-
-                    res.cookie('username', u);
-                    res.cookie('uid', result.rows[0].id);
-                    res.cookie('isadmin', result.rows[0].isadmin);
 
                     if (result.rows[0].isadmin === 'Y') {
                         res.render('loggedin', { user: u, admin: '<a href="/admin">Admin Options</a>' });
@@ -148,7 +144,7 @@ function processRegister(params, res) {
             if (error) {
 
                 if (error.constraint == 'unique_user') {
-                    res.render('register', { message: 'Username is already taken!' }); 
+                    res.render('register', { message: 'Username is already taken!' });
                 } 
                 console.log(error)
                 // res.status(500).send(error);
@@ -218,15 +214,12 @@ function processAdmin(req, res) {
                 let data = result.rows;
                 // console.log(data); // checking what data holds
                 res.render('admin', { data });
+                
             }
             
         });
     }
 }
-
-// Why did we reference the same id through different variables?
-// Gonna do some testing to find out.
-// ^^ Probably do to with the posting methods related to the forms.
 
 function processDeleteUser(params, req, res) {
     let uid = params.hiddenId;
@@ -239,7 +232,8 @@ function processDeleteUser(params, req, res) {
                 console.log(error);
                 res.status(500).send(error);
             } else {
-                processAdmin(req, res);
+                // processAdmin(req, res);
+                res.redirect('/admin');
             }
         });
 }
@@ -255,7 +249,8 @@ function processMakeAdmin(params, req, res) {
                 console.log(error);
                 res.status(500).send(error);
             } else {
-                processAdmin(req, res);
+                // processAdmin(req, res);
+                res.redirect('/admin');
             }
         });
 }
@@ -271,7 +266,8 @@ function processRemoveAdmin(params, req, res) {
                 console.log(error);
                 res.status(500).send(error);
             } else {
-                processAdmin(req, res);
+                // processAdmin(req, res);
+                res.redirect('/admin')
             }
         });
 }
@@ -295,7 +291,8 @@ function processAdminChangePassword(params, req, res) {
             console.log(error);
             res.status(500).send(error);
         } else {
-            processAdmin(req, res);
+            // processAdmin(req, res);
+            res.redirect('/admin');
         }
     });
 }

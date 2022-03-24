@@ -51,18 +51,21 @@
                     if (isAdmin == 'Y') {
                         // console.log(isAdmin + ' <-- in the true block');
                         // console.log('in true block');
+
                         $('#btmakeAdmin').prop('disabled', true);
+                        $('#btmakeAdmin').prop('cursor', 'not-allowed');
                         $('#btremoveAdmin').prop('disabled', false);
-                        $("#formMakeAdmin").css("display", "none");
-                        $("#formRemoveAdmin").css("display", "block");
+                        $('#btremoveAdmin').prop('cursor', 'pointer');
+                        // $("#formMakeAdmin").css("display", "none");
+                        // $("#formRemoveAdmin").css("display", "block");
                     } else {
-                        
-                        // console.log(isAdmin + ' <-- in the else block');
-                        // console.log('in else block');
+
                         $('#btmakeAdmin').prop('disabled', false);
                         $('#btremoveAdmin').prop('disabled', true);
-                        $("#formMakeAdmin").css("display", "block");
-                        $("#formRemoveAdmin").css("display", "none");
+                        // $("#formMakeAdmin").css("display", "block");
+                        // $("#formRemoveAdmin").css("display", "none");
+                        $('#btmakeAdmin').prop('cursor', 'pointer');
+                        $('#btremoveAdmin').prop('cursor', 'not-allowed');
                     }
                 }
             });
@@ -71,51 +74,58 @@
 </head>
 
 <body>
-    <table id="example" class="display" style="width:80%">
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Is Admin?</th>
-            </tr>
-        </thead>
-        <% for (var i=0; i < data.length; i++) { %>
-            <tr>
-                <td>
-                    <%=data[i].id%>
-                </td>
-                <td>
-                    <%=data[i].username%>
-                </td>
-                <td>
-                    <%=data[i].password%>
-                </td>
-                <td>
-                    <%=data[i].isadmin%>
-                </td>
-            </tr>
-            <% } %>
-    </table>
-    <p>The selected user is currently: <label id="lblUsername"></label></p>
-    <p>The options available to you are:</p>
-    <form action="deleteUser" method="POST" id="formDeleteUser">
-        <input type="hidden" name="hiddenId" id="hiddenId" />
-        <button type="submit" id="btdeleteUser">Delete User</button>
+    <form action="" class="dbform">
+        <table id="example" class="display" style="width:80%">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Is Admin?</th>
+                </tr>
+            </thead>
+            <% for (var i=0; i < data.length; i++) { %>
+                <tr>
+                    <td>
+                        <%=data[i].id%>
+                    </td>
+                    <td>
+                        <%=data[i].username%>
+                    </td>
+                    <td>
+                        <%=data[i].password%>
+                    </td>
+                    <td>
+                        <%=data[i].isadmin%>
+                    </td>
+                </tr>
+                <% } %>
+        </table>
+
     </form>
-    <form action="makeAdmin" method="POST" id="formMakeAdmin">
-        <input type="hidden" name="hiddenMakeAdminId" id="hiddenMakeAdminId" />
-        <button type="submit" id="btmakeAdmin">Make Admin</button>
-    </form>
-    <form action="removeAdmin" method="POST" id="formRemoveAdmin">
-        <input type="hidden" name="hiddenRemoveAdminId" id="hiddenRemoveAdminId" />
-        <button type="submit" id="btremoveAdmin">Remove Admin</button>
-    </form>
-    <form action="adminChangePassword" method="POST" id="formAdminChangePassword">
-        <input type="text" name="adminChangePassword" id="adminChangePassword"/>
-        <input type="hidden" name="changePasswordId" id="changePasswordId"/>
-        <button type="submit" id="btAdminChangePassword">Change Password</button>
-    </form>
+    <div class="options">
+        <p>The selected user is currently: <label id="lblUsername"></label></p>
+
+        <form action="deleteUser" method="POST" id="formDeleteUser">
+            <input type="hidden" name="hiddenId" id="hiddenId" />
+            <button type="submit" id="btdeleteUser">Delete User</button>
+        </form>
+        <form action="makeAdmin" method="POST" id="formMakeAdmin">
+            <input type="hidden" name="hiddenMakeAdminId" id="hiddenMakeAdminId" />
+            <button type="submit" id="btmakeAdmin">Make Admin</button>
+        </form>
+        <form action="removeAdmin" method="POST" id="formRemoveAdmin">
+            <input type="hidden" name="hiddenRemoveAdminId" id="hiddenRemoveAdminId" />
+            <button type="submit" id="btremoveAdmin">Remove Admin</button>
+        </form>
+        <form action="adminChangePassword" method="POST" id="formAdminChangePassword">
+            <button type="submit" id="btAdminChangePassword">Change Password</button>
+            <input type="text" name="adminChangePassword" id="adminChangePassword" />
+            <input type="hidden" name="changePasswordId" id="changePasswordId" />
+            
+        </form>
+    </div>
+
 </body>
 
 </html>
