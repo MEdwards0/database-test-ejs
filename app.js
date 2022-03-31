@@ -23,9 +23,14 @@ app.use(cookieParser());
 app.set('views', 'views');
 app.set('view engine', 'ejs');
 
-// app.use(express.bodyParser());
-
 app.get('/login', (req, res) => {
+    
+    // Could change these to NULL instead of empty strings.
+    myUser.setIsAdmin = null;
+    myUser.setPassword = null;
+    myUser.setUid = null;
+    myUser.setUsername = null;
+
     res.render('login', {message: ''});
 })
 
@@ -33,24 +38,6 @@ app.get('/register', (req, res) => {
     res.render('register', {message: ''});
 })
 
-// app.get('/test', (req, res) => {
-//     client.query('SELECT * FROM "mytable"',
-//     (error, result) => {
-//         if (error) {
-//             console.log(error);
-//             res.status(400).send(error);
-//         }
-//         // res.status(200).send(result.rows);
-
-//         let isadmin = result.rows[0].isadmin;
-
-//         if (isadmin == 'Y') {
-//             console.log('match');
-//         } else {
-//             console.log('no match');
-//         }
-//     });
-// });
 
 app.get('/edituser', (req, res) => {
     getEditProfile(req, res);
@@ -59,10 +46,6 @@ app.get('/edituser', (req, res) => {
 app.get('/admin', (req, res)=> {
     processAdmin(req, res);
 })
-
-// app.get('/bug', (req, res) => {
-//     res.render('bug', { message:'on the getter'});
-// });
 
 app.post('/login', (req, res, next) => {
     processLogin(req.body, res);
@@ -97,6 +80,7 @@ function processLogin(params, res) {
     let p = params.password;
 
     let tableName = 'mytable';
+    // Get user function to be separated
     client.query(`SELECT id, password, isadmin FROM ${tableName} WHERE username = '${u}'`,
         (error, result) => {
             if (error) {
@@ -300,3 +284,14 @@ function processAdminChangePassword(params, req, res) {
 app.listen(PORT, function(){
     console.log(`running on port ${PORT}`);
 });
+
+/* 
+TO DO:
+
+- Refactor code to follow single responsibility principle.
+- Move code to separate files, importing and exporting where needed.
+- Update password implementation to use hashing instead of storing plaintext pwd.
+- Create/ update database table to better fit this new password format. (longer character lengths)
+- Decide between MD5 or a more secure version of SHA. (SHA-256)
+- Change update login password options in profile edit and admin edit. <- Hashing passwords
+*/
