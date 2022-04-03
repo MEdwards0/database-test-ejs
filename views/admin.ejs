@@ -82,6 +82,7 @@
                     <th>Username</th>
                     <th>Password</th>
                     <th>Is Admin?</th>
+                    <th>enc_password</th>
                 </tr>
             </thead>
             <% for (var i=0; i < data.length; i++) { %>
@@ -97,6 +98,9 @@
                     </td>
                     <td>
                         <%=data[i].isadmin%>
+                    </td>
+                    <td>
+                        <%=data[i].encrypted_password%>
                     </td>
                 </tr>
                 <% } %>
