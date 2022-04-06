@@ -2,13 +2,14 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-const encyptPassword = (userPassword) => {
+const encryptPassword = (userPassword) => {
     let encyptedPassword = bcrypt.hash(userPassword, saltRounds);
     return encyptedPassword;
+    // because bycrypt.hash returns a promise, the whole function becomes asynchronous.
 }
 
 const checkEncryptedPassword = async ({password, encryptedPassword}) => {
     return bcrypt.compare(password, encryptedPassword);
 }
 
-module.exports = {encyptPassword, checkEncryptedPassword};
+module.exports = {encryptPassword, checkEncryptedPassword};

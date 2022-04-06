@@ -1,69 +1,29 @@
 const { createUser, getUser, getUserInfo, updateUserProfile, adminRetrieveAllUsers, adminDeleteUser, adminDemoteAdminToUser, adminPromoteUserToAdmin } = require('./dbController.js');
 const user = require('./user.js');
-const { encyptPassword, checkEncryptedPassword } = require('./passwords.js');
+const { encryptPassword, checkEncryptedPassword } = require('./passwords.js');
 
-let myUser = new user;
+let myUser = new user; // <- this is bad. In the global scope of things. Should create a new instance whenever we need it within a variable and return the obj?
+// refactoring is needed here.
 
-const createUserProfile = (req, res) => {
+const createUserProfile = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    encyptPassword(password)
-        .then(result => {
-            createUser({ username, password, result })
-                .then(() => res.render('register', { message: 'User account created!' }))
-                .catch(error => {
-                    console.log(error);
 
-                    if (error.constraint === 'unique_user') {
-                        res.render('register', { message: 'User account already exists!' })
-                    }
-                });
-        })
-        .catch(error => {
+    try {
+        let encrypted_password = await encryptPassword(password);
+        await createUser({ username, password, encrypted_password });
+        res.render('register', { message: 'User account created!' });
+
+    } catch (error) {
+
+        if (error.constraint === 'unique_user') {
+            res.render('register', { message: 'User account already exists!' })
+        } else {
             console.log(error);
             res.status(500).send(error);
-        });
-
+        }
+    }
 }
-
-// const processUserLogon = (req, res) => {
-//     let username = req.body.username;
-//     let password = req.body.password;
-
-//     getUser({username})
-//     .then(result => {
-//         if (result.rowCount == 0) {
-//             res.render('login', { message: 'Invalid username or password!' });
-//         } else {
-//             let data = result;
-//             let encryptedPassword = result.rows[0].encrypted_password;
-//             checkEncryptedPassword({ password, encryptedPassword })
-//             .then(result => {
-//                 if (result) {
-//                 myUser.setUid = data.rows[0].id;
-//                 myUser.setUsername = username;
-//                 myUser.setPassword = data.rows[0].password;
-//                 myUser.setIsAdmin = data.rows[0].isadmin;
-//                 if (myUser.getIsAdmin === 'Y') {
-//                     res.render('loggedin', { user: username, admin: '<a href="/admin">Admin Options</a>' });
-//                 } else {
-//                     res.render('loggedin', { user: username, admin: '' });
-//                 }
-
-//             } else {
-//                 res.render('login', { message: 'Invalid username or password!' });
-//             }
-//             })
-//                 .catch(error => {
-//                     console.log(error);
-//                 });
-
-//         }
-//     })
-//     .catch(error => {
-//         console.log(error);
-//     });
-// }
 
 const processUserLogon = async (req, res) => {
     let username = req.body.username;
@@ -98,145 +58,161 @@ const processUserLogon = async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     }
-
-
-
-    // getUser({ username })
-    //     .then(result => {
-    //         if (result.rowCount == 0) {
-    //             res.render('login', { message: 'Invalid username or password!' });
-    //         } else {
-    //             let data = result;
-    //             let encryptedPassword = result.rows[0].encrypted_password;
-    //             let hashedPword = await checkEncryptedPassword({ password, encryptedPassword })
-    //                  if (hashedPword) {
-    //                     myUser.setUid = data.rows[0].id;
-    //                     myUser.setUsername = username;
-    //                     myUser.setPassword = data.rows[0].password;
-    //                     myUser.setIsAdmin = data.rows[0].isadmin;
-    //                     if (myUser.getIsAdmin === 'Y') {
-    //                         res.render('loggedin', { user: username, admin: '<a href="/admin">Admin Options</a>' });
-    //                     } else {
-    //                         res.render('loggedin', { user: username, admin: '' });
-    //                     }
-
-    //                 } else {
-    //                     res.render('login', { message: 'Invalid username or password!' });
-    //                 }
-    //                 // .catch(error => {
-    //                 //     console.log(error);
-    //                 // });
-
-    //         }
-    //     })
-    // .catch(error => {
-    //     console.log(error);
-    // });
 }
 
-const displayUserProfile = (req, res) => {
+const displayUserProfile = async (req, res) => {
     let uid = myUser.getUid;
 
-    getUserInfo({ uid })
-        .then(result => {
-            res.render('edituser', { username: myUser.getUsername, password: result.rows[0].encrypted_password })
+    try {
+        let result = await getUserInfo({ uid });
+        res.render('edituser', { username: myUser.getUsername, password: result.rows[0].encrypted_password });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
 
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
-        })
 }
 
-const processUpdateUserProfile = (req, res) => {
+const processUpdateUserProfile = async (req, res) => {
     let uid = myUser.getUid;
     let username = myUser.getUsername;
     let password = req.body.password;
 
-    encyptPassword(password)
-        .then(result => {
-            updateUserProfile({ uid, password, result })
-                .then(() => res.render('login', { message: 'Password successfully updated.' }))
-                .catch(error => {
-                    console.log(error);
-                    res.status(500).send(error);
+    try {
+        let result = await encryptPassword(password);
+        await updateUserProfile({ uid, password, result });
+        res.render('login', { message: 'Password successfully updated.' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
 
-                })
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
 
-        })
+
+
+    // encryptPassword(password)
+    //     .then(result => {
+    //         updateUserProfile({ uid, password, result })
+    //             .then(() => res.render('login', { message: 'Password successfully updated.' }))
+    //             .catch(error => {
+    //                 console.log(error);
+    //                 res.status(500).send(error);
+
+    //             })
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //         res.status(500).send(error);
+
+    //     })
 }
 
-const processAdminAccount = (req, res) => {
-    if (myUser.getIsAdmin != 'Y') {
-        res.render('login', { message: '' });
-    } else {
-        adminRetrieveAllUsers()
-            .then(result => {
-                let data = result.rows;
-                res.render('admin', { data });
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).send(error);
-            })
+const processAdminAccount = async (req, res) => {
+
+    try {
+        if (myUser.getIsAdmin != 'Y') {
+            res.render('login', { message: '' });
+        } else {
+            let result = await adminRetrieveAllUsers()
+            let data = result.rows;
+            res.render('admin', { data });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
     }
 }
 
-const processDeleteUser = (req, res) => {
-    let uid = req.body.hiddenId;
+const processDeleteUser = async (req, res) => {
+    // let uid = req.body.hiddenId;
 
-    adminDeleteUser({ uid })
-        .then(() => processAdminAccount(req, res))
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
-        });
+    try {
+        let uid = req.body.hiddenId;
+        await adminDeleteUser({uid});
+        await processAdminAccount(req, res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+
+    // adminDeleteUser({ uid })
+    //     .then(() => processAdminAccount(req, res))
+    //     .catch(error => {
+    //         console.log(error);
+    //         res.status(500).send(error);
+    //     });
 }
 
-const processMakeAdmin = (req, res) => {
-    let uid = req.body.hiddenMakeAdminId;
+const processMakeAdmin = async (req, res) => {
 
-    adminPromoteUserToAdmin({ uid })
-        .then(() => processAdminAccount(req, res))
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
-        });
+    try {
+        let uid = req.body.hiddenMakeAdminId;
+        await adminPromoteUserToAdmin({uid});
+        await processAdminAccount(req, res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+
+    // adminPromoteUserToAdmin({ uid })
+    //     .then(() => processAdminAccount(req, res))
+    //     .catch(error => {
+    //         console.log(error);
+    //         res.status(500).send(error);
+    //     });
 }
 
-const processRemoveAdmin = (req, res) => {
-    let uid = req.body.hiddenRemoveAdminId;
+const processRemoveAdmin = async (req, res) => {
 
-    adminDemoteAdminToUser({ uid })
-        .then(() => processAdminAccount(req, res))
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
-        });
+    try {
+        let uid = req.body.hiddenRemoveAdminId;
+        await adminDemoteAdminToUser({uid});
+        await processAdminAccount(req, res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+
+    // adminDemoteAdminToUser({ uid })
+    //     .then(() => processAdminAccount(req, res))
+    //     .catch(error => {
+    //         console.log(error);
+    //         res.status(500).send(error);
+    //     });
 }
 
-const processAdminChangePassword = (req, res) => {
-    let uid = req.body.changePasswordId;
-    let password = req.body.adminChangePassword;
+const processAdminChangePassword = async (req, res) => {
 
-    password = password.replace(/\s/g, '');
-    encyptPassword(password)
-        .then(result => {
-            updateUserProfile({ uid, password, result })
-                .then(() => processAdminAccount(req, res))
-                .catch(error => {
-                    console.log(error);
-                    res.status(500).send(error);
-                });
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).send(error);
-        });
+    try {
+        let uid = req.body.changePasswordId;
+        let password = req.body.adminChangePassword;
+        password = password.replace(/\s/g, '');
+        
+        let result = await encryptPassword(password);
+        await updateUserProfile({uid, password, result});
+        await processAdminAccount(req, res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+
+    // password = password.replace(/\s/g, '');
+    // encryptPassword(password)
+    //     .then(result => {
+    //         updateUserProfile({ uid, password, result })
+    //             .then(() => processAdminAccount(req, res))
+    //             .catch(error => {
+    //                 console.log(error);
+    //                 res.status(500).send(error);
+    //             });
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //         res.status(500).send(error);
+    //     });
 }
 
 const resetUserObject = (req, res) => {
