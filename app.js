@@ -5,7 +5,7 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const debug = require('debug')('app');
 const PORT = process.env.PORT || 4000;
-const client = require('./db.js')
+// const client = require('./db.js')
 const path = require('path');
 const webController = require('./webController.js');
 
@@ -24,22 +24,16 @@ app.get('/register', (req, res) => {
 })
 
 app.get('/edituser',webController.displayUserProfile);
-
 app.get('/admin', webController.processAdminAccount);
-
 app.post('/register', webController.createUserProfile);
-
 app.post('/edituser', webController.processUpdateUserProfile);
-
 app.post('/login', webController.processUserLogon);
-
 app.post('/deleteUser',webController.processDeleteUser)
-
 app.post('/makeAdmin', webController.processMakeAdmin);
-
 app.post('/removeAdmin', webController.processRemoveAdmin);
-
 app.post('/adminChangePassword',webController.processAdminChangePassword);
+
+
 
 
 app.listen(PORT, function(){

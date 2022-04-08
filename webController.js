@@ -1,9 +1,13 @@
 const { createUser, getUser, getUserInfo, updateUserProfile, adminRetrieveAllUsers, adminDeleteUser, adminDemoteAdminToUser, adminPromoteUserToAdmin } = require('./dbController.js');
 const user = require('./user.js');
 const { encryptPassword, checkEncryptedPassword } = require('./passwords.js');
+const { dbErrorHandle } = require('./dbErrorHandling.js');
+const superUser = require('./superuser');
 
 let myUser = new user; // <- this is bad. In the global scope of things. Should create a new instance whenever we need it within a variable and return the obj?
 // refactoring is needed here.
+
+let mySuperUser = new superUser;
 
 const createUserProfile = async (req, res) => {
     let username = req.body.username;
@@ -16,8 +20,10 @@ const createUserProfile = async (req, res) => {
 
     } catch (error) {
 
+        
         if (error.constraint === 'unique_user') {
-            res.render('register', { message: 'User account already exists!' })
+            let dbError = dbErrorHandle(error.constraint);
+             res.render('register', { message: dbError })
         } else {
             console.log(error);
             res.status(500).send(error);
@@ -42,6 +48,7 @@ const processUserLogon = async (req, res) => {
 
             if (hashedPword) {
                 myUser.setUid = data.rows[0].id;
+                mySuperUser.setUid = myUser.getUid;
                 myUser.setUsername = username;
                 myUser.setPassword = data.rows[0].password;
                 myUser.setIsAdmin = data.rows[0].isadmin;
@@ -61,9 +68,9 @@ const processUserLogon = async (req, res) => {
 }
 
 const displayUserProfile = async (req, res) => {
-    let uid = myUser.getUid;
-
+    
     try {
+        let uid = myUser.getUid;
         let result = await getUserInfo({ uid });
         res.render('edituser', { username: myUser.getUsername, password: result.rows[0].encrypted_password });
     } catch (error) {

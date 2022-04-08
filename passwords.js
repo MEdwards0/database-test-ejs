@@ -8,7 +8,7 @@ const encryptPassword = (userPassword) => {
     // because bycrypt.hash returns a promise, the whole function becomes asynchronous.
 }
 
-const checkEncryptedPassword = async ({password, encryptedPassword}) => {
+const checkEncryptedPassword = ({password, encryptedPassword}) => {
     return bcrypt.compare(password, encryptedPassword);
 }
 

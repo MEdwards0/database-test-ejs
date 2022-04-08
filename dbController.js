@@ -10,6 +10,7 @@ const createUser = ({username, password, result}) => {
 
 const getUser = ({username}) => {
     let tableName = 'mytable';
+    
     return client.query(
         `SELECT id, password, isadmin, encrypted_password FROM ${tableName} WHERE username = '${username}'`
     );
@@ -32,7 +33,7 @@ const updateUserProfile = ({uid, password, result}) => {
 const adminRetrieveAllUsers = () => {
     let tableName = 'mytable';
     return client.query(
-        `SELECT * FROM "${tableName}"`
+        `SELECT id, username, '********' AS password, isadmin, '********' AS encrypted_password  FROM "${tableName}"`
     );
 }
 
@@ -59,4 +60,3 @@ const adminDemoteAdminToUser = ({ uid }) => {
 
 module.exports = {createUser, getUser, getUserInfo, updateUserProfile, adminRetrieveAllUsers, adminDeleteUser, adminDemoteAdminToUser,
                     adminPromoteUserToAdmin};
-                    
