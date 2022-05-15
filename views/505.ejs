@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/login.css">
+    <title>Login</title>
+</head>
+
+<body>
+
+    <!-- <h1 class="login-title">Log in</h1> -->
+
+    <form action="login" method="POST">
+        <div class="container">
+            <label for='username'>Username: </label>
+            <input type='text' id='username' name='username' required>
+
+            <label for='password'>Password: </label>
+            <input type='password' id='password' name='password' required>
+
+            <input type='submit' value='Log in' id="submit" disabled>
+        </div>
+        <!-- <button class="btn" id="button"></button> -->
+        <div class="info">
+            <!-- <p>Don't have an account? <a href="register">Register here</a></p> -->
+            <p id="message"> <%=message%> </p>
+        </div>
+
+    </form>
+</body>
+
+</html>

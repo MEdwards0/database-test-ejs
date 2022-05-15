@@ -8,6 +8,19 @@ const client = new Client({
     port: 5432,
 })
 
-client.connect();
+async function dbConnect() {
+    await client.connect();
+    console.log('database connected.');
+    
+};
 
-module.exports = client;
+async function dbDisconnect() {
+    await client.end();
+    console.log('database disconnected.'); 
+}
+
+// Temporary:
+
+dbConnect();
+
+module.exports = {client, dbConnect, dbDisconnect};
