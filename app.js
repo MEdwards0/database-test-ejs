@@ -51,13 +51,3 @@ app.post('/fileselector', (req, res) => {
 app.listen(PORT, function(){
     console.log(`running on port ${PORT}`);
 });
-
-/* 
-TO DO:
-
-- Update password implementation to use hashing instead of storing plaintext pwd.
-- Create/ update database table to better fit this new password format. (longer character lengths)
-
-- Change update login password options in profile edit and admin edit. <- Hashing passwords
-- connect once, disconnect every time?
-*/
